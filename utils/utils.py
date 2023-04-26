@@ -44,6 +44,12 @@ def train_valid_split(data, valid_ratio = 0.95):
 
     return train_data, valid_data
 
+def test_data(data):
+    test_data = []
+    data_length = len(data[list(data.keys())[0]])
+    for i in np.arange(n,data_length):
+        test_data.append(createTensor(data, time=i))
+    return test_data
 
 # the next three functions are for calculating the transaction cost
 def auxilary_transaction(current_strategy_prime, current_strategy, mu):
@@ -63,8 +69,8 @@ def transaction_cost(current_strategy_prime, current_strategy, tol = 0.001):
     return mu
 
 # test transaction_cost
-#current_strategy_prime = torch.tensor([1, 0.5, 0.5])
-#current_strategy = torch.tensor([1, 0.5, 0.5])
+#current_strategy_prime = torch.from_numpy(np.array([1/3, 1/3, 1/3])).float()
+#current_strategy = torch.from_numpy(np.array([1/3, 1/3, 1/3])).float()
 #print(transaction_cost(current_strategy_prime, current_strategy))
 
 
@@ -79,6 +85,25 @@ def estimate_reward(previous_strategy, current_strategy, relative_price, tol = 0
 
     return reward
 
+# implement a function to calculate the maximum drawdown
+def max_drawdown(data):
+    max_drawdown = 0
+    max_value = -np.inf
+    for i in range(len(data)):
+        if data[i] > max_value:
+            max_value = data[i]
+        else:
+            drawdown = (max_value - data[i])/max_value
+            if drawdown > max_drawdown:
+                max_drawdown = drawdown
+    return max_drawdown
+
+# implement a function to calculate the sharpe ratio
+def sharpe_ratio(data):
+    return np.mean(data)/np.std(data)
+
+def fAPV(data):
+    return np.sum(data)
 
 
         
